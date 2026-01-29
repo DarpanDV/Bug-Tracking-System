@@ -1,3 +1,4 @@
 *.log
 .env
 bug-tracker-backend/node_modules/
+bug-tracker-frontend/node_modules/
