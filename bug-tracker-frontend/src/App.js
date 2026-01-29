@@ -1,23 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
+import Login from "./components/Login";
+import CreateTicket from "./components/CreateTicket";
+import TicketList from "./components/TicketList";
 
 function App() {
+  const { token, logout } = useContext(AuthContext);
+
+  if (!token) return <Login />;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Bug Tracking System</h1>
+      <button onClick={logout}>Logout</button>
+      <CreateTicket />
+      <TicketList />
     </div>
   );
 }

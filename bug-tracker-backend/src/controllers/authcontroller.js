@@ -1,21 +1,33 @@
-
 const User = require("../models/User");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
-  const hashedPwd = await bcrypt.hash(req.body.password, 10);
-  const user = await User.create({ ...req.body, password: hashedPwd });
-  res.json(user);
+  const { name, email, password } = req.body;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+  });
+
+  res.status(201).json({ message: "User registered" });
 };
 
 exports.login = async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
-  if (!user) return res.status(401).json({ message: "Invalid user" });
+  const { email, password } = req.body;
 
-  const isValid = await bcrypt.compare(req.body.password, user.password);
-  if (!isValid) return res.status(401).json({ message: "Wrong password" });
+  const user = await User.findOne({ email });
+  if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-  const token = jwt.sign({ id: user._id }, "SECRET");
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+
   res.json({ token });
 };
