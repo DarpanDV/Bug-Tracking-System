@@ -1,4 +1,4 @@
-// controllers/ticketController.js
+
 const Ticket = require("../models/Ticket");
 
 exports.createTicket = async (req, res) => {
